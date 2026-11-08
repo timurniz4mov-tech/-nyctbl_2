@@ -1,0 +1,17 @@
+{
+  "block.desertapocalypse.desert_heart": "Сердце Пустыни",
+  "item.desertapocalypse.desert_compass": "Компас пустыни",
+  "message.desertapocalypse.start": "Где-то рядом пробудилось Сердце Пустыни... Апокалипсис начался!",
+  "message.desertapocalypse.new_day": "День апокалипсиса: %s. Пустыня теперь наступает со скоростью %s блоков в минуту.",
+  "message.desertapocalypse.compass": "Сердце Пустыни: %s %s м",
+  "message.desertapocalypse.compass.none": "Апокалипсис ещё не начался",
+  "message.desertapocalypse.compass.dimension": "Компас работает только в Верхнем мире",
+  "hud.desertapocalypse.inside": "Зона пустыни | День %s",
+  "hud.desertapocalypse.outside": "До пустыни: %s м | День %s",
+  "command.desertapocalypse.not_started": "Апокалипсис ещё не начался",
+  "command.desertapocalypse.info": "День %s | Радиус пустыни: %s | Скорость: %s бл/мин | Сердце: %s",
+  "command.desertapocalypse.restart": "Апокалипсис перезапущен рядом с вами",
+  "command.desertapocalypse.wrong_dimension": "Вы должны находиться в Верхнем мире",
+  "command.desertapocalypse.setradius": "Радиус пустыни установлен: %s",
+  "command.desertapocalypse.setday": "День апокалипсиса установлен: %s"
+}

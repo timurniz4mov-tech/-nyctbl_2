@@ -1,0 +1,17 @@
+{
+  "block.desertapocalypse.desert_heart": "Heart of the Desert",
+  "item.desertapocalypse.desert_compass": "Desert Compass",
+  "message.desertapocalypse.start": "Somewhere nearby the Heart of the Desert has awakened... The apocalypse has begun!",
+  "message.desertapocalypse.new_day": "Apocalypse day %s. The desert now spreads at %s blocks per minute.",
+  "message.desertapocalypse.compass": "Heart of the Desert: %s %s m",
+  "message.desertapocalypse.compass.none": "The apocalypse has not started yet",
+  "message.desertapocalypse.compass.dimension": "The compass only works in the Overworld",
+  "hud.desertapocalypse.inside": "Desert zone | Day %s",
+  "hud.desertapocalypse.outside": "Desert in %s m | Day %s",
+  "command.desertapocalypse.not_started": "The apocalypse has not started yet",
+  "command.desertapocalypse.info": "Day %s | Desert radius: %s | Speed: %s blocks/min | Heart: %s",
+  "command.desertapocalypse.restart": "The apocalypse was restarted near you",
+  "command.desertapocalypse.wrong_dimension": "You must be in the Overworld",
+  "command.desertapocalypse.setradius": "Desert radius set to %s",
+  "command.desertapocalypse.setday": "Apocalypse day set to %s"
+}

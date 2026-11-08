@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+
+[[mods]]
+modId="desertapocalypse"
+version="1.0.0"
+displayName="Desert Apocalypse"
+description='''
+Desert Apocalypse: рядом с вами пробуждается Сердце Пустыни и начинает пожирать мир.
+Земля превращается в песок, а вас мучает жажда.
+'''
+
+[[dependencies.desertapocalypse]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.desertapocalypse]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH"

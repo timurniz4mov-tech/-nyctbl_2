@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " S ",
+    "SCS",
+    " S "
+  ],
+  "key": {
+    "S": { "item": "minecraft:sand" },
+    "C": { "item": "minecraft:compass" }
+  },
+  "result": { "item": "desertapocalypse:desert_compass" }
+}
