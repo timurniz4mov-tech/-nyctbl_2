@@ -43,6 +43,9 @@ public final class ApocalypseStarter {
         data.center = best;
         data.radius = ApocalypseConfig.START_RADIUS.get();
         data.ticks = 0L;
+        data.stormTicks = 0;
+        data.slowTicks = 0;
+        data.nextStormIn = 4800 + random.nextInt(6000);
         data.setDirty();
 
         // сразу превращаем область вокруг сердца в пустыню

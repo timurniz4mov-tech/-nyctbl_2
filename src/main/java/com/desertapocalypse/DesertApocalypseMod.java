@@ -17,6 +17,7 @@ public class DesertApocalypseMod {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModBlocks.BLOCKS.register(modBus);
         ModItems.ITEMS.register(modBus);
+        ModEntities.ENTITY_TYPES.register(modBus);
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::addCreativeTabs);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ApocalypseConfig.SPEC);
@@ -29,9 +30,26 @@ public class DesertApocalypseMod {
     private void addCreativeTabs(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(ModItems.DESERT_COMPASS);
+            event.accept(ModItems.OASIS_CRYSTAL);
+            event.accept(ModItems.DUNE_SEAL);
         }
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
             event.accept(ModItems.DESERT_HEART_ITEM);
+        }
+        if (event.getTabKey() == CreativeModeTabs.COMBAT) {
+            event.accept(ModItems.SUN_BLADE);
+            event.accept(ModItems.DESERT_HELMET);
+            event.accept(ModItems.DESERT_CHESTPLATE);
+            event.accept(ModItems.DESERT_LEGGINGS);
+            event.accept(ModItems.DESERT_BOOTS);
+        }
+        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+            event.accept(ModItems.DESERT_COIN);
+        }
+        if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
+            event.accept(ModItems.DESERT_STALKER_SPAWN_EGG);
+            event.accept(ModItems.DESERT_COLOSSUS_SPAWN_EGG);
+            event.accept(ModItems.DESERT_MASTER_SPAWN_EGG);
         }
     }
 }

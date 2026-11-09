@@ -10,11 +10,20 @@ import net.minecraft.world.level.saveddata.SavedData;
 public class ApocalypseData extends SavedData {
     private static final String NAME = "desertapocalypse_data";
     public static final int DAY_TICKS = 24000;
+    /** Во сколько раз Кристалл оазиса замедляет рост пустыни. */
+    public static final double SLOW_FACTOR = 0.35D;
 
     public boolean started = false;
     public BlockPos center = BlockPos.ZERO;
     public double radius = 0.0D;
     public long ticks = 0L;
+
+    /** Сколько тиков ещё длится песчаная буря (0 = бури нет). */
+    public int stormTicks = 0;
+    /** Через сколько тиков бросать кубик на новую бурю. */
+    public int nextStormIn = 6000;
+    /** Сколько тиков ещё действует замедление от Кристалла оазиса. */
+    public int slowTicks = 0;
 
     public static ApocalypseData get(ServerLevel anyLevel) {
         ServerLevel overworld = anyLevel.getServer().overworld();
@@ -27,6 +36,9 @@ public class ApocalypseData extends SavedData {
         data.center = new BlockPos(tag.getInt("cx"), tag.getInt("cy"), tag.getInt("cz"));
         data.radius = tag.getDouble("radius");
         data.ticks = tag.getLong("ticks");
+        data.stormTicks = tag.getInt("stormTicks");
+        data.nextStormIn = tag.contains("nextStormIn") ? tag.getInt("nextStormIn") : 6000;
+        data.slowTicks = tag.getInt("slowTicks");
         return data;
     }
 
@@ -38,6 +50,9 @@ public class ApocalypseData extends SavedData {
         tag.putInt("cz", center.getZ());
         tag.putDouble("radius", radius);
         tag.putLong("ticks", ticks);
+        tag.putInt("stormTicks", stormTicks);
+        tag.putInt("nextStormIn", nextStormIn);
+        tag.putInt("slowTicks", slowTicks);
         return tag;
     }
 
@@ -46,12 +61,17 @@ public class ApocalypseData extends SavedData {
         return (int) (ticks / DAY_TICKS) + 1;
     }
 
-    /** Скорость роста в блоках в секунду: с каждым днём всё быстрее. */
+    /** Скорость роста без замедления, блоков в секунду: с каждым днём всё быстрее. */
     public double speedPerSecond() {
         double day = ticks / (double) DAY_TICKS;
         double speed = ApocalypseConfig.BASE_SPEED.get()
                 * Math.pow(1.0D + ApocalypseConfig.DAILY_ACCELERATION.get(), day);
         return Math.min(speed, ApocalypseConfig.MAX_SPEED.get());
+    }
+
+    /** Реальная скорость роста с учётом Кристалла оазиса. */
+    public double effectiveSpeedPerSecond() {
+        return speedPerSecond() * (slowTicks > 0 ? SLOW_FACTOR : 1.0D);
     }
 
     public boolean isInside(double x, double z) {

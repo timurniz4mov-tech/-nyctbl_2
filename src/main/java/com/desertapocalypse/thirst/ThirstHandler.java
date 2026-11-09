@@ -4,6 +4,7 @@ import com.desertapocalypse.ApocalypseConfig;
 import com.desertapocalypse.DesertApocalypseMod;
 import com.desertapocalypse.ModItems;
 import com.desertapocalypse.ModNetwork;
+import com.desertapocalypse.item.DesertArmorItem;
 import com.desertapocalypse.world.ApocalypseData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -56,6 +57,13 @@ public final class ThirstHandler {
         if (player.isSprinting()) {
             multiplier += 1.0F;
         }
+        int armorPieces = countArmor(player);
+        boolean storm = inDesert && data.stormTicks > 0 && level.canSeeSky(player.blockPosition());
+        if (storm) {
+            // песчаная буря: самая быстрая трата жажды (полный комплект брони сильно смягчает)
+            multiplier += armorPieces >= 4 ? 1.5F : 3.5F;
+        }
+        multiplier *= 1.0F - 0.12F * armorPieces;
         if (player.isInWater()) {
             multiplier = 0.0F;
         }
@@ -84,10 +92,24 @@ public final class ThirstHandler {
             if (thirst <= 3.0F) {
                 player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0, true, false, true));
             }
+            if (storm && armorPieces < 4) {
+                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 0, true, false, true));
+            }
         }
         if (thirst <= 0.0F && player.tickCount % 40 == 0) {
             player.hurt(player.damageSources().generic(), 1.0F);
         }
+    }
+
+    /** Сколько частей брони странника надето (0-4). */
+    public static int countArmor(Player player) {
+        int count = 0;
+        for (ItemStack stack : player.getArmorSlots()) {
+            if (stack.getItem() instanceof DesertArmorItem) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public static void sync(ServerPlayer player) {
@@ -95,11 +117,13 @@ public final class ThirstHandler {
         float thirst = ApocalypseConfig.THIRST_ENABLED.get() ? Thirst.get(player) : -1.0F;
         int day = 0;
         float edge = 0.0F;
+        boolean storm = false;
         if (data.started && player.level().dimension() == Level.OVERWORLD) {
             day = data.dayNumber();
             edge = (float) data.distanceToEdge(player.getX(), player.getZ());
+            storm = data.stormTicks > 0 && edge <= 0.0F;
         }
-        ModNetwork.sendToPlayer(player, new ThirstSyncPacket(thirst, day, edge));
+        ModNetwork.sendToPlayer(player, new ThirstSyncPacket(thirst, day, edge, storm));
     }
 
     public static void giveStarterKit(ServerPlayer player) {

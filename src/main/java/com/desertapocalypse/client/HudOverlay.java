@@ -69,6 +69,10 @@ public final class HudOverlay {
             color = 0xFFFFFFFF;
         }
         graphics.drawCenteredString(mc.font, text, width / 2, 2, color);
+        if (ClientData.storm) {
+            graphics.drawCenteredString(mc.font, Component.translatable("hud.desertapocalypse.storm"),
+                    width / 2, 12, 0xFFFF5544);
+        }
     };
 
     private static void drawDrop(GuiGraphics graphics, int left, int top, int color, int maxColumn) {

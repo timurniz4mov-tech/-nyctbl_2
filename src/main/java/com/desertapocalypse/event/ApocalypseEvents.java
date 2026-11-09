@@ -5,7 +5,9 @@ import com.desertapocalypse.command.ApocalypseCommand;
 import com.desertapocalypse.thirst.ThirstHandler;
 import com.desertapocalypse.world.ApocalypseData;
 import com.desertapocalypse.world.ApocalypseStarter;
+import com.desertapocalypse.world.DesertMobSpawner;
 import com.desertapocalypse.world.DesertSpreader;
+import com.desertapocalypse.world.StormController;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -46,7 +48,10 @@ public final class ApocalypseEvents {
             }
         } else {
             data.ticks++;
-            data.radius += data.speedPerSecond() / 20.0D;
+            if (data.slowTicks > 0) {
+                data.slowTicks--;
+            }
+            data.radius += data.effectiveSpeedPerSecond() / 20.0D;
 
             if (data.ticks % ApocalypseData.DAY_TICKS == 0) {
                 announceNewDay(server, data);
@@ -54,9 +59,16 @@ public final class ApocalypseEvents {
             if (data.ticks % 200 == 0) {
                 data.setDirty();
             }
+
+            StormController.tick(server, data);
+
             for (ServerPlayer player : overworld.players()) {
-                if (!player.isSpectator()) {
-                    DesertSpreader.spreadAround(overworld, data, player);
+                if (player.isSpectator()) {
+                    continue;
+                }
+                DesertSpreader.spreadAround(overworld, data, player);
+                if ((server.getTickCount() + player.getId()) % 40 == 0) {
+                    DesertMobSpawner.tick(overworld, data, player);
                 }
             }
         }
@@ -67,7 +79,7 @@ public final class ApocalypseEvents {
     }
 
     private static void announceNewDay(MinecraftServer server, ApocalypseData data) {
-        String speed = String.format(Locale.ROOT, "%.1f", data.speedPerSecond() * 60.0D);
+        String speed = String.format(Locale.ROOT, "%.1f", data.effectiveSpeedPerSecond() * 60.0D);
         server.getPlayerList().broadcastSystemMessage(
                 Component.translatable("message.desertapocalypse.new_day", data.dayNumber(), speed)
                         .withStyle(ChatFormatting.YELLOW), false);

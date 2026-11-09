@@ -3,6 +3,7 @@ package com.desertapocalypse.command;
 import com.desertapocalypse.ModBlocks;
 import com.desertapocalypse.world.ApocalypseData;
 import com.desertapocalypse.world.ApocalypseStarter;
+import com.desertapocalypse.world.StormController;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -16,7 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 
 import java.util.Locale;
 
-/** /apocalypse info | restart | setradius <r> | setday <n> */
+/** /apocalypse info | restart | setradius <r> | setday <n> | storm start|stop */
 public final class ApocalypseCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -35,7 +36,13 @@ public final class ApocalypseCommand {
                         .requires(src -> src.hasPermission(2))
                         .then(Commands.argument("day", IntegerArgumentType.integer(1, 1000))
                                 .executes(ctx -> setDay(ctx.getSource(),
-                                        IntegerArgumentType.getInteger(ctx, "day"))))));
+                                        IntegerArgumentType.getInteger(ctx, "day")))))
+                .then(Commands.literal("storm")
+                        .requires(src -> src.hasPermission(2))
+                        .then(Commands.literal("start")
+                                .executes(ctx -> storm(ctx.getSource(), true)))
+                        .then(Commands.literal("stop")
+                                .executes(ctx -> storm(ctx.getSource(), false)))));
     }
 
     private static int info(CommandSourceStack source) {
@@ -46,7 +53,7 @@ public final class ApocalypseCommand {
         }
         String day = String.valueOf(data.dayNumber());
         String radius = String.format(Locale.ROOT, "%.1f", data.radius);
-        String speed = String.format(Locale.ROOT, "%.2f", data.speedPerSecond() * 60.0D);
+        String speed = String.format(Locale.ROOT, "%.2f", data.effectiveSpeedPerSecond() * 60.0D);
         String heart = source.hasPermission(2)
                 ? data.center.getX() + " " + data.center.getY() + " " + data.center.getZ()
                 : "???";
@@ -93,6 +100,20 @@ public final class ApocalypseCommand {
         data.ticks = (long) (day - 1) * ApocalypseData.DAY_TICKS;
         data.setDirty();
         source.sendSuccess(() -> Component.translatable("command.desertapocalypse.setday", String.valueOf(day)), true);
+        return 1;
+    }
+
+    private static int storm(CommandSourceStack source, boolean start) {
+        ApocalypseData data = ApocalypseData.get(source.getServer().overworld());
+        if (!data.started) {
+            source.sendFailure(Component.translatable("command.desertapocalypse.not_started"));
+            return 0;
+        }
+        if (start) {
+            StormController.start(source.getServer(), data, 4800);
+        } else {
+            StormController.stop(source.getServer(), data);
+        }
         return 1;
     }
 
